@@ -1,0 +1,217 @@
+🚀 Predictive Maintenance – Production-Grade ML System
+
+A production-ready predictive maintenance system that detects upcoming machine failures using industrial sensor data.
+The project demonstrates end-to-end AI engineering, from data ingestion to deployment, monitoring, and drift detection.
+
+Built with a strong focus on real-world ML systems, not notebooks or toy examples.
+
+🧠 Problem Statement
+
+Industrial machines generate high-frequency sensor data during operation.
+Unexpected failures are expensive and disruptive.
+
+Goal:
+Predict whether a machine is likely to fail within the next 30 operating cycles, enabling proactive maintenance.
+
+🏗️ System Architecture
+Raw Sensor Data
+      ↓
+Data Validation & Labeling
+      ↓
+Feature Engineering (Rolling Windows)
+      ↓
+Leakage-Safe Model Training
+      ↓
+MLflow Experiment Tracking
+      ↓
+FastAPI Inference Service
+      ↓
+Inference Logging
+      ↓
+Data Drift Monitoring (Evidently)
+
+
+This mirrors how production ML systems are built in industry.
+
+📊 Dataset
+
+NASA CMAPSS Turbofan Engine Dataset
+
+Multivariate time-series sensor data
+
+Failure occurs at the final cycle of each engine
+
+Target Definition
+
+Remaining Useful Life (RUL) is computed per engine
+
+Binary label:
+
+1 → failure within next 30 cycles
+
+0 → otherwise
+
+🔧 Key Engineering Decisions
+✅ Leakage-Safe Training
+
+Data split is done by engine ID, not randomly by rows
+
+Prevents future information leakage — critical for time-series ML
+
+✅ Feature Contract Enforcement
+
+Model is trained only on engineered features
+
+Inference strictly validates feature count and order
+
+Prevents silent prediction errors in production
+
+✅ Configuration & Reproducibility
+
+Deterministic pipelines
+
+Explicit dependency pinning
+
+Experiment tracking via MLflow
+
+🧩 Features
+🔹 Feature Engineering
+
+Rolling window statistics (mean, std)
+
+Captures degradation trends rather than single sensor snapshots
+
+🔹 Model Training
+
+RandomForest baseline (robust, interpretable)
+
+Recall-focused evaluation (missing failures is costly)
+
+🔹 Experiment Tracking
+
+Parameters, metrics, and artifacts logged using MLflow
+
+🔹 Inference API
+
+FastAPI service with:
+
+/health endpoint
+
+/predict endpoint
+
+Pydantic input validation
+
+🔹 Monitoring & Drift Detection
+
+Inference data logged in production
+
+Evidently compares training vs production distributions
+
+Drift reports generated automatically
+
+🌐 API Usage
+Start API
+uvicorn src.inference.app:app --reload
+
+Health Check
+GET /health
+
+Prediction
+POST /predict
+
+
+Request body:
+
+{
+  "features": [0.12, 0.15, 0.18, ..., 0.42]
+}
+
+
+Response:
+
+{
+  "will_fail_soon": 0,
+  "probability": 0.000085
+}
+
+📈 Drift Monitoring
+
+After collecting inference logs:
+
+python src/monitoring/drift.py
+
+
+Output:
+
+HTML drift report comparing training vs production data
+
+Feature-level drift statistics
+
+This enables post-deployment model reliability checks.
+
+📁 Project Structure
+predictive-maintenance-ml/
+│
+├── data/
+│   ├── raw/
+│   └── processed/
+│
+├── src/
+│   ├── data/          # loading & validation
+│   ├── features/      # feature engineering
+│   ├── models/        # training & evaluation
+│   ├── inference/     # FastAPI service
+│   └── monitoring/    # logging & drift detection
+│
+├── scripts/            # API testing
+├── logs/               # inference logs
+├── reports/            # drift reports
+├── requirements.txt
+└── README.md
+
+🛠️ Tech Stack
+
+Python
+
+Pandas / NumPy
+
+scikit-learn
+
+FastAPI
+
+MLflow
+
+Evidently
+
+Docker-ready structure
+
+Dependencies are explicitly pinned for reproducibility.
+
+🎯 What This Project Demonstrates
+
+End-to-end ML system design
+
+Production inference APIs
+
+Monitoring & drift detection
+
+Dependency conflict resolution
+
+Industry-grade engineering practices
+
+This project reflects how AI Engineers actually work in production environments.
+
+🚀 Next Improvements
+
+Dockerized deployment
+
+CI checks for schema drift
+
+Model retraining automation
+
+Alerting on drift detection
+
+👤 Author
+
+AI Engineer | ML Systems Builder
+Focused on production-ready machine learning, monitoring, and reliability.
