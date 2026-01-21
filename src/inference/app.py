@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pathlib import Path
 import joblib
 import pandas as pd
+from src.monitoring.logger import log_inference
 
 from src.inference.schema import EngineFeatures, PredictionResponse
 
@@ -77,7 +78,11 @@ def predict(payload: EngineFeatures):
         # Predict probability of failure
         probability = model.predict_proba(X)[0][1]
         prediction = int(probability >= 0.5)
-
+        log_inference(
+            features=payload.features,
+            prediction=prediction,
+            probability=probability,
+        )
         return PredictionResponse(
             will_fail_soon=prediction,
             probability=float(probability),
