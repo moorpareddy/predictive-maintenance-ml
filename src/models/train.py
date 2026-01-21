@@ -11,7 +11,14 @@ FEATURE_DATA_PATH = Path("data/processed/engine_features.csv")
 MODEL_PATH = Path("models/model.joblib")
 
 TARGET_COL = "will_fail_soon"
-DROP_COLS = ["engine_id", "cycle", "RUL"]
+DROP_COLS = [
+    "engine_id",
+    "cycle",
+    "RUL",
+    "op_setting_1",
+    "op_setting_2",
+    "op_setting_3",
+] + [f"sensor_{i}" for i in range(1, 22)]
 
 
 def load_data():
